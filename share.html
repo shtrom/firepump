@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo Share Window</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    function onLoad() {
+      $("#shared").text(location.search);
+    }
+
+    function share() {
+      // The use has clicked share, you should now share it with their friends!
+      window.close();
+    }
+
+    var shareData;
+    addEventListener("OpenGraphData", function(e) {
+      shareData = JSON.parse(e.detail);
+      $("#shared").text(shareData.url);
+      $("#data").text(e.detail);
+      socialMarkUpdate(true);
+    });
+    </script>
+</head>
+
+<body onload="onLoad()">
+  <div id="content">
+    <h3>This window shares the url</h3>
+    <div>Sharing: <div id="shared" class="textbox"></div></div>
+    <div>Data: <div id="data" class="textbox"></div></div>
+    <button onclick="share();">Share!</button>
+  </div>
+</body>
+</html>
