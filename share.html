@@ -29,10 +29,14 @@
       if ($("#comment").val()) {
 	post.object.content += "<p>"+$("#comment").val()+"</p>";
       }
-      console.debug("https://"+instance+"/api/user/"+username+"/feed" + " " +
-	  JSON.stringify(post));
+      window.alert("POST " + "https://"+instance+"/api/user/"+username+"/feed" +
+	  "\nData: " + JSON.stringify(post));
+      $.ajaxSetup({ contentType: "application/json; charset=utf-8" });
+      $.post("https://"+instance+"/api/user/"+username+"/feed",
+      //$.post("/api/user/"+username+"/feed",
+	  JSON.stringify(post));//.always(alert);
 
-      window.close();
+      //window.close();
     }
 
     function htmlEnt(str) {
