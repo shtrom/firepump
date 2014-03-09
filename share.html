@@ -4,31 +4,74 @@
     <title>Pump.io Share Window</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript">
+    var username = localStorage.username;
+    var instance = localStorage.instance;
+
     function onLoad() {
       $("#shared").text(location.search);
     }
 
     function share() {
       // The use has clicked share, you should now share it with their friends!
+      post = {};
+      post.verb = "post";
+      post.object = {};
+      post.object.content = "";
+      post.object.objectType = "note";
+      if ($("#title").val()) {
+	post.object.displayName = $("#title").val();
+	post.object.content += "<h1><a href='"+$("#shared").val()+"'>"+$("#title").val()+"</a></h1>";
+      }
+      post.object.content += "<blockquote>"+$("#data").val()+"</blockquote>";
+      if (!$("#title").val()) {
+	post.object.content += "Link: <a href='"+$("#shared").val()+"'>"+$("#shared").val()+"</a>";
+      }
+      if ($("#comment").val()) {
+	post.object.content += "<p>"+$("#comment").val()+"</p>";
+      }
+      console.debug("https://"+instance+"/api/user/"+username+"/feed" + " " +
+	  JSON.stringify(post));
+
       window.close();
+    }
+
+    function htmlEnt(str) {
+      return $("<div/>").html(str).text();
     }
 
     var shareData;
     addEventListener("OpenGraphData", function(e) {
       shareData = JSON.parse(e.detail);
-      $("#shared").text(shareData.url);
-      $("#data").text(e.detail);
+      $("#title-title").text(htmlEnt("&ldquo;") + shareData.title + htmlEnt("&rdquo;"));
+      $("#instance").text(instance);
+      $("#username").text(username);
+      $("#title").val(shareData.title);
+      $("#shared").val(shareData.url);
+      if (shareData.text) {
+        $("#data").text(shareData.text);
+      } else {
+        $("#data").text(shareData.description);
+      }
+      $("#debug").text(e.detail);
       socialMarkUpdate(true);
     });
     </script>
 </head>
 
-<body onload="onLoad()">
+<body onload="onLoad()" style="width: 300px; height: 400px">
   <div id="content">
-    <h3>This window shares the url</h3>
-    <div>Sharing: <div id="shared" class="textbox"></div></div>
-    <div>Data: <div id="data" class="textbox"></div></div>
-    <button onclick="share();">Share!</button>
+    <h3>Share <span id="title-title">URL</span> to <span id="instance">instance</span>
+      as <span id="username">user</span></h3>
+    <div>Title: <input id="title" class="textbox"></input></div>
+    <div>URL: <input id="shared" class="textbox"></input></div>
+    <div>Quote: <textarea id="data" style="width: 300px"></textarea></div>
+    <div>Comment: <textarea id="comment" style="width: 300px"></textarea></div>
+    <div>
+      <button onclick="share();">Share!</button>
+      <button onclick="window.open('https://'+instance+'/main/login')"
+	title="Log in to this instance">Log in</button>
+    </div>
+    <div style="font-size: smaller">Debug: <div id="debug" class="textbox"></div></div>
   </div>
 </body>
 </html>
