@@ -1,6 +1,6 @@
 <html>
 <head>
-  <title>Demo Social Service</title>
+  <title>Pump.io Social API provider</title>
 </head>
 <script>
 var loc = location.href;
@@ -8,7 +8,7 @@ var baseurl = loc.substring(0,loc.lastIndexOf('/'));
 
 var data = {
   // currently required
-  "name": "Demo Social Service",
+  "name": "Pump.io",
   "iconURL": baseurl+"/firefox16.png",
   "icon32URL": baseurl+"/firefox32.png",
   "icon64URL": baseurl+"/firefox64.png",
@@ -18,21 +18,40 @@ var data = {
   "shareURL": baseurl+"/share.html?url=%{url}",
 
   // should be available for display purposes
-  "description": "A short paragraph about this provider",
-  "author": "Shane Caraveo, Mozilla",
-  "homepageURL": "https://github.com/mixedpuppy/socialapi-demo/",
+  "description": "A social API provider for Pump.io",
+  "author": "Olivier Mehani",
+  "homepageURL": "https://github.com/shtrom/firepump",
 
   // optional
-  "version": "1.1"
+  "version": "0.1"
 }
 
 function activate(node) {
   var event = new CustomEvent("ActivateSocialFeature");
+  localStorage.username = document.getElementById('username').value;
+  getInstance();
   node.setAttribute("data-service", JSON.stringify(data));
   node.dispatchEvent(event);
 }
+
+function getInstance() {
+  localStorage.instance = document.getElementById('instance').value;
+  return localStorage.instance;
+}
+
 </script>
 <body>
-  <button onclick="activate(this)" title="activate the demo provider">Activate The Demo Provider</button>
+<div>
+  <label for="username">Webfinger:</label>
+  <input id="username" value="shtrom" onchange="getInstance()"/>
+  <label for="instance">@</label>
+  <input id="instance" value="1realtime.net" onchange="getInstance()"/>
+</div>
+<div>
+  <button onclick="activate(this)" title="Activate the Social API provider for this instance">
+    Activate Pump.io provider</button>
+  <button onclick="window.open('https://'+getInstance()+'/main/login')"
+    title="Log in to this instance">Log in</button>
+</div>
 </body>
 </html>
